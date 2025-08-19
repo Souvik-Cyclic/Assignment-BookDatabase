@@ -2,11 +2,13 @@ package com.souvik;
 
 import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Driver {
     public static void main(String[] args) {
         List<Book> books = DatasetReader.readDataset("data.csv");
+        BookService bookService = new BookService(books);
         Scanner scanner = new Scanner(System.in);
         int choice = 0;
         while (choice != 6) {
@@ -27,43 +29,48 @@ public class Driver {
                     case 1:
                         System.out.println("Enter author's name: ");
                         String authorName = scanner.nextLine();
-                        long count = books.stream()
-                                .filter(book -> book.getAuthor().equalsIgnoreCase(authorName))
-                                .count();
+                        long count = bookService.countBooksByAuthor(authorName);
                         System.out.println("Author " + authorName + " has " + count + " books");
                         break;
                     case 2:
                         System.out.println("Authors in the dataset:");
-                        books.stream()
-                                .map(Book::getAuthor)
-                                .distinct()
-                                .sorted()
-                                .forEach(System.out::println);
+                        List<String> authors = bookService.getDistinctAuthors();
+                        authors.forEach(System.out::println);
                         break;
                     case 3:
                         System.out.println("Enter author's name: ");
                         String aName = scanner.nextLine();
                         System.out.println("Books by " + aName + ":");
-                        books.stream()
-                                .filter(b -> b.getAuthor().equalsIgnoreCase(aName))
-                                .map(Book::getTitle)
-                                .forEach(System.out::println);
+                        List<String> titles = bookService.findBookTitlesByAuthor(aName);
+                        if (titles.isEmpty()) {
+                            System.out.println("No books with author name: " + aName + " found");
+                        } else {
+                            titles.forEach(System.out::println);
+                        }
                         break;
                     case 4:
                         System.out.println("Enter user rating: ");
                         double rating = scanner.nextDouble();
+                        scanner.nextLine();
                         System.out.println("Books with " + rating + " rating:");
-                        books.stream()
-                                .filter(b -> b.getUserRating() == rating)
-                                .forEach(Book::printDetails);
+                        List<Book> ratedBooks = bookService.findBooksByRating(rating);
+                        if (ratedBooks.isEmpty()) {
+                            System.out.println("No books found with " + rating + " rating.");
+                        } else {
+                            ratedBooks.forEach(Book::printDetails);
+                        }
                         break;
                     case 5:
                         System.out.println("Enter author's name: ");
                         String authName = scanner.nextLine();
                         System.out.println("Book by " + authName + " with their prices :");
-                        books.stream()
-                                .filter(b -> b.getAuthor().equalsIgnoreCase(authName))
-                                .forEach(b -> System.out.println("'" + b.getTitle() + "': $" + b.getPrice()));
+                        Map<String, Double> prices = bookService.getBookPricesByAuthor(authName);
+                        if (prices.isEmpty()) {
+                            System.out.println("No books found for " + authName);
+                        } else {
+                            prices.forEach((title, price) ->
+                                    System.out.printf("%s : %.2f%n", title, price));
+                        }
                         break;
                     case 6:
                         System.out.println("Exiting");
