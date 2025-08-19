@@ -49,14 +49,13 @@ public class Driver {
                         }
                         break;
                     case 4:
-                        System.out.println("Enter user rating: ");
+                        System.out.println("Enter rating: ");
                         double rating = scanner.nextDouble();
-                        scanner.nextLine();
-                        System.out.println("Books with " + rating + " rating:");
                         List<Book> ratedBooks = bookService.findBooksByRating(rating);
                         if (ratedBooks.isEmpty()) {
                             System.out.println("No books found with " + rating + " rating.");
                         } else {
+                            System.out.println("Books with " + rating + " rating:");
                             ratedBooks.forEach(Book::printDetails);
                         }
                         break;
@@ -66,7 +65,7 @@ public class Driver {
                         System.out.println("Book by " + authName + " with their prices :");
                         Map<String, Double> prices = bookService.getBookPricesByAuthor(authName);
                         if (prices.isEmpty()) {
-                            System.out.println("No books found for " + authName);
+                            System.out.println("No books with author name: " + authName + " found");
                         } else {
                             prices.forEach((title, price) ->
                                     System.out.printf("%s : %.2f%n", title, price));
