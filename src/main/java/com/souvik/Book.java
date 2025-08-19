@@ -39,8 +39,20 @@ public class Book {
         return userRating;
     }
 
+    private long getReviews() {
+        return reviews;
+    }
+
     public double getPrice() {
         return price;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public String getGenre() {
+        return genre;
     }
 
     public void printDetails() {
